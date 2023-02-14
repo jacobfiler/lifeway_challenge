@@ -5,6 +5,8 @@ import styles from '@/styles/Home.module.css'
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
 
+  
+
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
@@ -14,21 +16,26 @@ export default function Home() {
   const [loading, setLoading] = useState(false)
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
+  const [species, setSpecies] = useState([]);
   const [films, setFilms] = useState([]);
   const [starships, setStarships] = useState([]);
 
  
   
   useEffect(() => {
-    getFilms();
+    console.log('state change')
     getStarships();
+    getFilms();
+    getSpecies();
   }, [results]);
   
   const handleSearch = async () => {
     try {
       setLoading(true);
+      console.log('searching...')
       const response = await axios.get(`https://swapi.dev/api/people/?search=${query}`);
       setResults(response.data.results[0]);
+      setLoading(false);
     } catch (error) {
       console.error(error);
     }
@@ -60,6 +67,20 @@ export default function Home() {
     }
   };
 
+  const getSpecies = async () => {
+    if (results.species) {
+      console.log('getting species')    
+      //humans do not have species info, so check if undefined
+      if (results.species = []) {
+        setSpecies('Human');
+      }
+      else{
+        //set species state
+        const response = await axios.get(results.species[0]);
+        setSpecies(response.data.name);
+      }
+    }
+  };
 
 
   return (
@@ -79,15 +100,16 @@ export default function Home() {
       <button onClick={handleSearch}>Search</button> 
         </div>
         <div className={styles.results}>
+
           {loading ? (
-            <h4>Loading...</h4>
+            <div>Loading...</div>
           ) : (
-            
           <div>
             <h1>{results.name}</h1>
             <h2>Height: {results.height}</h2>
             <h2>Mass: {results.mass}</h2>
             <h2>Hair Color: {results.hair_color}</h2>
+            <h3>Species: {species}</h3>
             <h3>Appears In:</h3>
             <ul>
               {films.map((film) => (
@@ -101,9 +123,8 @@ export default function Home() {
               ))}
             </ul>
           </div>
-
-          
           )}
+
         </div>
       </main>
     </>
