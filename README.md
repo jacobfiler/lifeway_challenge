@@ -1,16 +1,15 @@
 # Lifeway Challenge
 
-This is my first project using Nextjs, and my first with any testing library.
+This was my first project using Next.js, and my first with any testing library.
 
-I had a bit of a learning curve to getting a MVP, but I really enjoyed the process, and also enjoy Nextjs.
-
+I spent a good amount of time going through the Next.js and Jest documentation, and am now a fan of both!
 
 ## Development
-I went through a few iterations of the initial SWAPI call, but ultimately landed on one function, with a few try/catch statements to get the data, and make the next API calls to get the starship, film, and species info.
+I went through a few iterations of the initial SWAPI call, but ultimately landed on using one function for the initial search call, and using the iniial response to make the next API calls to get the starship, film, and species info. I added a few try/catch statements to make sure it wouldn't break if one of the calls failed. A better way to accomplish this would be to split up the submit function into functions that just handle each API call, but I didn't want to spend the time messing with setStates and useEffects.
 
 
 ## Add next?
-If I would have had more time, I would have spent time doing some more styling outside of just Bootstrap, and also dove more into Jest. I currently have a test that is just checking if the page loads. Simulating an API call is not as easy as it sounds, but I found some documentation on similating the call with hard-coding a dummy response, which sounds promising.
+As mentioned previously, the next step would be to split out the submit statements, but I would also like to spend time doing  more styling outside of just Bootstrap, and also dive more into complitated tests Jest. I currently have a test that is just checking if the page loads. Simulating an API call is not as easy as it sounds, but I found some documentation on similating the call with hard-coding a dummy response, which sounds promising.
 
 
 ## Run this project
