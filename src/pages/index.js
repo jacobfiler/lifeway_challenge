@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
 import React, { useEffect, useState } from "react";
-//import {Container, Row, Col} from 'react-bootstrap';
+import {Row, Col} from 'react-bootstrap';
 import axios from 'axios';
 
   
@@ -99,46 +99,67 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
+        <div>
+          <Row>
+            <Col className='h2 text-light fw-light'>Star Wars Character Search</Col>
+          </Row>
+          <Row>
+            <Col className='text-light fw-light'>Search below to get info on Star Wars Characters</Col>
+          </Row>
+        </div>
         <div className={styles.searchbar}>
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-      <button onClick={handleSearch}>Search</button> 
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          <button onClick={handleSearch}>Search</button> 
         </div>
         <div className={styles.results}>
 
           {loading ? (
             <div>Loading...</div>
           ) : (
-          <div className='text-light'>
-            
-            <h1>{results.name}</h1>
-            <h2>Height: {results.height}</h2>
-            <h2>Mass: {results.mass}</h2>
-            <h2>Hair Color: {results.hair_color}</h2>
-            <h3>Species: {results.species}</h3>
-            <h3>Appears In:</h3>
-            
-            <ul>
-              {results.filmTitles?.map((film) => (
-                <li key={film}>{film}</li>
-              ))}
-            </ul>
-            <h3>Starships:</h3>
-            <ul>
-              {results.species === 'Droid' ? (
-                <p>*No ship records for droids</p>
-                ) : (
-              results.starshipNames?.map((starship) => (
-                <li key={starship}>{starship}</li>
-              ))
-              )}
-            </ul>
+          <div className='text-light fw-light'>
+            <Row>
+              <Col className='h5'>Name: {results.name}</Col>
+              <Row className='px-3'>Character Info:</Row>
+              <Row className='fw-lighter'>
+                <Col>Height: {results.height}</Col>
+                <Col>Birth Year: {results.birth_year} </Col>
+                <Col>Hair Color: {results.hair_color}</Col>
+                <Col>Mass: {results.mass}</Col>
+                <Col>Species: {results.species}</Col>
+              </Row>
+              <Row>
+              </Row>
+              <Row className='pt-5'>
+                <Col>
+                  <Row className='h5'>Films Appeared in:</Row>
+                  <Row className='fw-lighter'>
+                    {results.filmTitles?.map((film) => (
+                      <li key={film}>{film}</li>
+                    ))}
+                  </Row>
+                </Col>
+                <Col>
+                  <Row className='h5'>Starships flown:</Row>
+                  <Row className='fw-lighter'>
+                  {results.species === 'Droid' ? (
+                  <p>*No ship records for droids</p>
+                  ) : (
+                results.starshipNames?.map((starship) => (
+                  <li key={starship}>{starship}</li>
+                  ))
+                  )}
+                  </Row>
+                
+                </Col>
+              </Row>
+            </Row>
           </div>
           )}
-
+          
         </div>
       </main>
     </>
