@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
 import React, { useEffect, useState } from "react";
+//import {Container, Row, Col} from 'react-bootstrap';
 import axios from 'axios';
 
   
@@ -12,77 +13,84 @@ const inter = Inter({ subsets: ['latin'] })
 export default function Home() {
 
 
+
   //set state for search input and handle change
   const [loading, setLoading] = useState(false)
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
-  const [species, setSpecies] = useState([]);
-  const [films, setFilms] = useState([]);
-  const [starships, setStarships] = useState([]);
 
- 
-  
-  useEffect(() => {
-    console.log('state change')
-    getStarships();
-    getFilms();
-    getSpecies();
-  }, [results]);
+
+
   
   const handleSearch = async () => {
-    try {
       setLoading(true);
       console.log('searching...')
-      const response = await axios.get(`https://swapi.dev/api/people/?search=${query}`);
-      setResults(response.data.results[0]);
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+      let character = {};
+      try {
+        const response = await axios.get(`https://swapi.dev/api/people/?search=${query}`);
+        character = response.data.results[0];
+      }
+      catch (error) {
+        console.error(error);
+      }
 
-  const getFilms = async () => {
-    if (results.films) {
-      const filmUrls = results.films;
-      const filmTitles = [];
+      //get species info from species url
+
+      if (character.species) {
+
+        //check if species array is empty
+        if (character.species.length === 0) {
+          character.species = 'Human';
+        } else {
+          const speciesUrl = character.species[0];
+          try {
+                const response = await axios.get(speciesUrl);
+                character.species = response.data.name;
+          }
+          catch (error) {
+            console.error(error);
+          }
+        }
+
+      //get film info from film urls
+      if (character.films) {
+        const filmUrls = character.films;
+        const filmTitles = [];
+        for (let i = 0; i < filmUrls.length; i++) {
+          try {
+            const response = await axios.get(filmUrls[i]);
+            filmTitles.push(response.data.title);
+          }
+          catch (error) {
+            console.error(error);
+          }
+        }
+        character.filmTitles = filmTitles;
+      }
+      //get starship info from starship urls
+      if (character.starships) {
+        const starshipUrls = character.starships;
+        const starshipNames = [];
   
-      for (let i = 0; i < filmUrls.length; i++) {
-        const response = await axios.get(filmUrls[i]);
-        filmTitles.push(response.data.title);
+        for (let i = 0; i < starshipUrls.length; i++) {
+          try
+          {
+            const response = await axios.get(starshipUrls[i]);
+            starshipNames.push(response.data.name);
+          }
+          catch (error) {
+            console.error(error);
+          }
+        }
+        character.starshipNames = starshipNames;
       }
-      setFilms(filmTitles);
+      console.log(character);
+      setResults(character);
+      setLoading(false);
     }
   };
 
-  const getStarships = async () => {
-    if (results.starships) {
-      const starshipUrls = results.starships;
-      const starshipNames = [];
-
-      for (let i = 0; i < starshipUrls.length; i++) {
-        const response = await axios.get(starshipUrls[i]);
-        starshipNames.push(response.data.name);
-      }
-      setStarships(starshipNames);
-    }
-  };
-
-  const getSpecies = async () => {
-    if (results.species) {
-      console.log('getting species')    
-      //humans do not have species info, so check if undefined
-      if (results.species = []) {
-        setSpecies('Human');
-      }
-      else{
-        //set species state
-        const response = await axios.get(results.species[0]);
-        setSpecies(response.data.name);
-      }
-    }
-  };
-
-
+  
   return (
     <>
       <Head>
@@ -104,23 +112,29 @@ export default function Home() {
           {loading ? (
             <div>Loading...</div>
           ) : (
-          <div>
+          <div className='text-light'>
+            
             <h1>{results.name}</h1>
             <h2>Height: {results.height}</h2>
             <h2>Mass: {results.mass}</h2>
             <h2>Hair Color: {results.hair_color}</h2>
-            <h3>Species: {species}</h3>
+            <h3>Species: {results.species}</h3>
             <h3>Appears In:</h3>
+            
             <ul>
-              {films.map((film) => (
+              {results.filmTitles?.map((film) => (
                 <li key={film}>{film}</li>
               ))}
             </ul>
             <h3>Starships:</h3>
             <ul>
-              {starships.map((starship) => (
+              {results.species === 'Droid' ? (
+                <p>*No ship records for droids</p>
+                ) : (
+              results.starshipNames?.map((starship) => (
                 <li key={starship}>{starship}</li>
-              ))}
+              ))
+              )}
             </ul>
           </div>
           )}
